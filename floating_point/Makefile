@@ -1,6 +1,6 @@
 CC := gcc
 CFLAGS := -Wall -Wextra -lm -O2 -std=c11
-LDLIBS := -lm
+LDLIBS := -lmpfr -lgmp -lm
 TARGET := bf16_test
 
 SRCS := bf16.c bf16_test.c
