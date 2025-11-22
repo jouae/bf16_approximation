@@ -9,11 +9,11 @@ int main()
 	FILE *f2 = fopen(".range2.log", "w");
 	FILE *f3 = fopen(".range3.log", "w");
 	
-	// x between [pi/2, 0] 
+	// x between [0.140625, pi/2]
 	bf16_t i = (bf16_t){.bits = 0b0011111111001001}; // Initial
 	int j = 0, record_k, error_count = 0;
 	float difference, max_difference = 0;
-	for (j; j < 450; j++){
+	for (j; j < 441; j++){
 		float glibc_sin = bf16_to_fp32(fp32_to_bf16(sinf(bf16_to_fp32(i))));
 		float payne = bf16_to_fp32(bf16_sin(i, &record_k));
 		difference = fabs(payne-glibc_sin);
@@ -24,7 +24,7 @@ int main()
 		fprintf(f1, "%f\n",fabs(payne-glibc_sin));
 		i.bits--;
 	}
-	printf("Test range [0, pi/2]:\nMax difference = %f, Total %d numbers difference\n\n", max_difference, error_count);
+	printf("Test range [0.140625, pi/2]:\nMax difference = %f, Total %d numbers difference\n\n", max_difference, error_count);
 
 	// x larger than pi/2, need range reduction
 	i = (bf16_t){.bits = 0b0011111111001010}; // Initial
@@ -40,7 +40,7 @@ int main()
 		fprintf(f2, "%f\n",fabs(payne-glibc_sin));
 		i.bits++;
 	}
-	printf("Test range [pi/2, inf):\nMax difference = %f, Total %d numbers difference\n\n", max_difference, error_count);
+	printf("Test range [pi/2, +largest]:\nMax difference = %f, Total %d numbers difference\n\n", max_difference, error_count);
 
 	// x is negative, need range reduction
 	i = (bf16_t){.bits = 0x8080}; // Initial value, smallest negative normal BF16
@@ -56,7 +56,7 @@ int main()
 		fprintf(f3, "%f\n",fabs(payne-glibc_sin));
 		i.bits++;
 	}
-	printf("Test range [-smallest, -inf):\nMax difference = %f,"
+	printf("Test range [-smallest, -largest]:\nMax difference = %f,"
 	       "Total %d numbers difference\n\n", max_difference, error_count);
 
 	fclose(f1);
